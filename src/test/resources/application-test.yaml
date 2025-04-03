@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    topic: "tasks-topic"
+    consumer:
+      group-id: "tasks-group"
+    producer:
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"

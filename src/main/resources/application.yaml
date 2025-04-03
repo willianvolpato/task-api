@@ -1,0 +1,93 @@
+server:
+  servlet:
+    context-path: "/api/v1"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enabled: true
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "postgres"
+    driver-class-name: "org.postgresql.Driver"
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: "none"
+    show-sql: false
+    open-in-view: false
+  liquibase:
+    enabled: true
+    change-log: "classpath:db/changeLog.xml"
+    default-schema: "public"
+  data:
+    web:
+      pageable:
+        default-page-size: 5
+        max-page-size: 50
+        one-indexed-parameters: true
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    topic: "tasks-topic"
+    consumer:
+      group-id: "tasks-group"
+      auto-offset-reset: "earliest"
+      enable-auto-commit: false
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+      key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+    properties:
+      allow.auto.create.topics: true
+    listener:
+      missing-topics-fatal: false
+
+security:
+  jwt:
+    secret: "the-very-secret-key-that-should-be-long"
+    expiration: 3600000 # 1 hour in milliseconds
+  public-endpoints:
+    - "/tasks/auth/login"
+    - "/tasks/auth/register"
+    - "/swagger-ui/**"
+    - "/swagger/**"
+    - "/api-docs/**"
+    - "/swagger-resources/**"
+    - "/webjars/**"
+    - "/actuator/**"
+
+springdoc:
+  application:
+    name: "task-api"
+  api-docs:
+    enabled: true
+    path: "/api-docs"
+  swagger-ui:
+    enabled: true
+    path: "/swagger"
+    operationsSorter: "method"
+  info:
+    title: "Task API"
+    version: "1.0"
+    description: "API for managing tasks"
+    contact:
+      name: "Support Team"
+      email: "support@example.com"
+      url: "https://example.com"
